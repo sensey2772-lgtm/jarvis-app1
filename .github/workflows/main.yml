@@ -1,7 +1,7 @@
 name: Build Android APK
 on: [push]
 
-# Эта настройка убирает предупреждение о Node.js 20
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
