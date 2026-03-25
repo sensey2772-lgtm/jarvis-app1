@@ -10,10 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Проверяем, где лежат файлы (поможет отладить, если упадет)
-      - name: List files
-        run: ls -R
-
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -26,8 +22,8 @@ jobs:
       - name: Build APK
         run: |
           pip install flet
-          # Если main.py в корне, запустится эта команда:
-          flet build apk --verbose
+          # Явно указываем текущую директорию (.) как корень приложения
+          flet build apk . --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
