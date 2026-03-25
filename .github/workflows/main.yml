@@ -2,6 +2,7 @@ name: Build Android APK
 on: [push]
 
 env:
+  # Убираем предупреждение о Node.js 20
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -11,8 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Нужно для корректной сборки графических элементов Flet
-      - name: Install Linux dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libvlc-dev libmpv-dev
@@ -30,12 +30,12 @@ jobs:
       - name: Build APK
         run: |
           pip install flet
-          # Флаг --include-all-platforms делает APK совместимым со всеми телефонами
+          # Собираем для всех типов процессоров (чтобы точно открылось)
+          # Пока без сложных библиотек, только база
           flet build apk --include-all-platforms --verbose
-
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: jarvis-apk
-          # Flet иногда меняет путь, этот паттерн найдет APK в любом случае
           path: build/apk/*.apk
