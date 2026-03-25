@@ -10,6 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Установка системных библиотек для сборщика
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvlc-dev libmpv-dev portaudio19-dev libasound2-dev
+
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -22,9 +28,9 @@ jobs:
       - name: Build APK
         run: |
           pip install flet
-          # Явно указываем текущую директорию (.) как корень приложения
-          flet build apk . --verbose
-
+          # ВАЖНО: Перечисляем все ваши библиотеки через запятую без пробелов
+          flet build apk --include-all-platforms --verbose --requirements flet,bcrypt,SpeechRecognition,PyAudio,gTTS,pygame,huggingface_hub,plyer
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
