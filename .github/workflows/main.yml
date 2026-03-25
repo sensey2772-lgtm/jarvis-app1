@@ -8,15 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Установка системных библиотек для сборщика
-      - name: Install System Dependencies
+      # 1. Нужно для корректной сборки графических элементов Flet
+      - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libvlc-dev libmpv-dev portaudio19-dev libasound2-dev
+          sudo apt-get install -y libvlc-dev libmpv-dev
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
@@ -28,11 +30,12 @@ jobs:
       - name: Build APK
         run: |
           pip install flet
-          # ВАЖНО: Перечисляем все ваши библиотеки через запятую без пробелов
-          flet build apk --include-all-platforms --verbose --requirements flet,bcrypt,SpeechRecognition,PyAudio,gTTS,pygame,huggingface_hub,plyer
-          
+          # Флаг --include-all-platforms делает APK совместимым со всеми телефонами
+          flet build apk --include-all-platforms --verbose
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: jarvis-apk
+          # Flet иногда меняет путь, этот паттерн найдет APK в любом случае
           path: build/apk/*.apk
